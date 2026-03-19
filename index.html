@@ -1718,6 +1718,7 @@
         if (product) {
           cart.push(product);
           showToast(`Added ${product.name} to cart`);
+          updateWhatsAppCart();
         }
       }
 
@@ -1735,6 +1736,31 @@
           toast.classList.remove("active");
           setTimeout(() => toast.remove(), 400);
         }, 3000);
+      }
+
+      function updateWhatsAppCart() {
+        const waBtn = document.querySelector(".wa-btn");
+        const waMessage = document.querySelector(".wa-message");
+        const waWindow = document.getElementById("waWindow");
+
+        if (!cart.length) return;
+
+        // Calculate total
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+        // Create WhatsApp Message
+        let msg = "Hello, I would like to place an order for:\n";
+        cart.forEach((item) => {
+          msg += `- ${item.name} ($${item.price})\n`;
+        });
+        msg += `\nTotal: $${total}`;
+
+        // Update Link and UI
+        waBtn.href = `https://wa.me/2349161565309?text=${encodeURIComponent(msg)}`;
+        waMessage.innerHTML = `You have <strong>${cart.length} items</strong> in your cart.<br>Total: <strong>$${total}</strong><br><br>Click the button below to send your order!`;
+
+        // Open the widget to show the user
+        if (waWindow) waWindow.classList.add("active");
       }
 
       // =============================================
@@ -1964,6 +1990,80 @@
           });
         }
       }
+
+      // =============================================
+      // WHATSAPP WIDGET
+      // =============================================
+      function initWhatsApp() {
+        const toggler = document.getElementById("waToggler");
+        const windowEl = document.getElementById("waWindow");
+        const closeBtn = document.getElementById("closeWa");
+
+        if (!toggler || !windowEl || !closeBtn) return;
+
+        toggler.addEventListener("click", () => {
+          windowEl.classList.toggle("active");
+        });
+
+        closeBtn.addEventListener("click", () => {
+          windowEl.classList.remove("active");
+        });
+      }
+
+      // =============================================
+      // INIT
+      // =============================================
+      document.addEventListener("DOMContentLoaded", () => {
+        // Hide loader
+        setTimeout(() => {
+          document.getElementById("loader").classList.add("hidden");
+        }, 500);
+
+        // Init
+        initNavbar();
+        initEventListeners();
+        initWhatsApp();
+
+        // Start on home
+        navigateTo("home");
+      });
+
+      // =============================================
+      // WHATSAPP WIDGET
+      // =============================================
+      function initWhatsApp() {
+        const toggler = document.getElementById("waToggler");
+        const windowEl = document.getElementById("waWindow");
+        const closeBtn = document.getElementById("closeWa");
+
+        if (!toggler || !windowEl || !closeBtn) return;
+
+        toggler.addEventListener("click", () => {
+          windowEl.classList.toggle("active");
+        });
+
+        closeBtn.addEventListener("click", () => {
+          windowEl.classList.remove("active");
+        });
+      }
+
+      // =============================================
+      // INIT
+      // =============================================
+      document.addEventListener("DOMContentLoaded", () => {
+        // Hide loader
+        setTimeout(() => {
+          document.getElementById("loader").classList.add("hidden");
+        }, 500);
+
+        // Init
+        initNavbar();
+        initEventListeners();
+        initWhatsApp();
+
+        // Start on home
+        navigateTo("home");
+      });
 
       // =============================================
       // WHATSAPP WIDGET
