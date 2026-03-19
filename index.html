@@ -493,6 +493,31 @@
         background: #128c7e;
         transform: translateY(-2px);
       }
+
+      /* Toast Notification */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: rgba(10, 10, 10, 0.95);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 12px 24px;
+        border-radius: 50px;
+        z-index: 2000;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        backdrop-filter: blur(10px);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.9rem;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toast.active {
+        transform: translateX(-50%) translateY(0);
+      }
     </style>
   </head>
   <body>
@@ -1623,7 +1648,7 @@
           name: "9pm",
           category: "oriental",
           price: 180,
-          image: "9pm.jpg",
+          image: "9PM.jpg",
           notes: ["Apple", "Cinnamon", "Vanilla"],
           description:
             "A smooth, spicy, and sweet fragrance perfect for evening wear.",
@@ -1672,16 +1697,45 @@
           intensity: 50,
         },
         {
-          id: 5, // Corrected duplicate ID
-          name: "Khamrah",
+          id: 6,
+          name: "Royal oud",
           category: "floral",
           price: 40,
-          image: "khamrah.jpg",
+          image: "Royal oud.jpg",
           notes: ["Rose water", "Aloe", "Fresh"],
           description: "A very intense feminie perfume, long lasting perfume.",
           intensity: 50,
         },
       ];
+
+      // =============================================
+      // CART LOGIC
+      // =============================================
+      let cart = [];
+
+      function addToCart(id) {
+        const product = products.find((p) => p.id === id);
+        if (product) {
+          cart.push(product);
+          showToast(`Added ${product.name} to cart`);
+        }
+      }
+
+      function showToast(message) {
+        const existing = document.querySelector(".toast");
+        if (existing) existing.remove();
+
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.classList.add("active"), 10);
+        setTimeout(() => {
+          toast.classList.remove("active");
+          setTimeout(() => toast.remove(), 400);
+        }, 3000);
+      }
 
       // =============================================
       // ROUTER
@@ -1771,7 +1825,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="font-display text-2xl text-gradient">$${product.price}</span>
-                            <button class="btn-futuristic px-4 py-2 rounded-full text-xs uppercase tracking-wider">
+                            <button onclick="addToCart(${product.id})" class="btn-futuristic px-4 py-2 rounded-full text-xs uppercase tracking-wider">
                                 <span class="relative z-10">Add</span>
                             </button>
                         </div>
@@ -1807,7 +1861,7 @@
                             ${product.notes.map((note) => `<span class="text-[10px] px-2 py-1 border border-border rounded-full text-muted">${note}</span>`).join("")}
                         </div>
 
-                        <button class="btn-futuristic w-full py-3 rounded-full text-xs uppercase tracking-wider group-hover:bg-accent group-hover:text-black transition-colors">
+                        <button onclick="addToCart(${product.id})" class="btn-futuristic w-full py-3 rounded-full text-xs uppercase tracking-wider group-hover:bg-accent group-hover:text-black transition-colors">
                             <span class="relative z-10">Add to Cart</span>
                         </button>
                     </div>
